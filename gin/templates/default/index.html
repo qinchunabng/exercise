@@ -1,0 +1,50 @@
+{{ define "default/index.html" }}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <h1>前台模板</h1>
+    <!--模板，注意后面的点(.)-->
+    {{template "default/header.html" .}}
+    <h3>{{.title}} : {{formatDate .now}}</h3>
+    <!--移除空格语法-->
+    <h4>{{- .user.Name -}}</h4>
+    <h4>{{.user.Age}}</h4>
+
+    <br />
+    <!--变量-->
+    <h4>{{$obj:=.title}}</h4>
+    <h4>{{$obj}}</h4>
+
+    <br />
+
+    <!--条件判断-->
+    <h4>
+      {{if gt .user.Score 90.0}} 优秀 {{else if gt .user.Score 60.0}} 及格
+      {{else}} 不及格 {{end}}
+    </h4>
+
+    <!--range语法-->
+    <ul>
+      {{range $key,$value := .user.Hobby}}
+      <li>{{$value}}</li>
+      {{end}}
+    </ul>
+
+    <!--with语法-->
+    {{with .user}}
+    <h4>姓名：{{.Name}}</h4>
+    <h4>性别：{{.Gender}}</h4>
+    <h4>年龄：{{.Age}}</h4>
+    {{end}}
+
+    <!--内置函数-->
+    <h4>{{len .user.Hobby}} - {{index .user.Hobby 0}}</h4>
+  </body>
+</html>
+{{ end }}
