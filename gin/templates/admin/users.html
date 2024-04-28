@@ -1,0 +1,35 @@
+{{define "admin/users.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>邮箱</th>
+                <th>添加时间</th>
+            </th>
+        </thead>
+        <tbody>
+            {{range $key,$value := .users}}
+            <tr>
+                <td>{{$value.Id}}</td>
+                <td>{{$value.Username}}</td>
+                <td>{{$value.Age}}</td>
+                <td>{{$value.Email}}</td>
+                <td>{{$value.AddTime | formatDate}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</body>
+</html>
+{{end}}
