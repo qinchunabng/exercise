@@ -28,5 +28,6 @@ func AdminRoutesInit(router *gin.Engine) {
 		adminRouter.GET("/user", controller.UserController{}.Index)
 		adminRouter.POST("/user/add", controller.UserController{}.AddUser)
 		adminRouter.GET("/news", controller.NewsController{}.Index)
+		adminRouter.GET("/user/list", controller.UserController{}.List)
 	}
 }

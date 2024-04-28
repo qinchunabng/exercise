@@ -55,6 +55,12 @@ func main() {
 	//	第4个参数：redis密码
 	//	第5个参数：session加密密钥
 	store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
+	store.Options(sessions.Options{
+		Path:     "/",
+		MaxAge:   0,
+		HttpOnly: true,
+		Secure:   false,
+	})
 	r.Use(sessions.Sessions("mysession", store))
 	//全局中级间
 	r.Use(initMiddleware)
