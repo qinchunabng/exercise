@@ -16,6 +16,7 @@
                 <th>年龄</th>
                 <th>邮箱</th>
                 <th>添加时间</th>
+                <th>操作</th>
             </th>
         </thead>
         <tbody>
@@ -26,6 +27,7 @@
                 <td>{{$value.Age}}</td>
                 <td>{{$value.Email}}</td>
                 <td>{{$value.AddTime | formatDate}}</td>
+                <td><a href="/admin/user/edit?id={{$value.Id}}">编辑</a>&nbsp;&nbsp;<a class="danger" href="/admin/user/delete?id={{$value.Id}}">删除</a></td>
             </tr>
             {{end}}
         </tbody>

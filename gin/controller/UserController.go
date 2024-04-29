@@ -96,3 +96,51 @@ func (c UserController) AddUser(ctx *gin.Context) {
 	}
 
 }
+
+func (c UserController) Edit(ctx *gin.Context) {
+	idStr, ok := ctx.GetQuery("id")
+	user := models.User{}
+	if ok {
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			ctx.String(http.StatusBadRequest, "参数错误")
+			return
+		}
+		models.GetDB().Where("id=?", id).First(&user)
+	}
+
+	ctx.HTML(http.StatusOK, "admin/edit_user.html", &user)
+}
+
+func (c UserController) Save(ctx *gin.Context) {
+	var user models.User
+	if err := ctx.ShouldBind(&user); err != nil {
+		ctx.String(http.StatusBadRequest, "参数错误")
+		return
+	}
+	result := models.GetDB().Save(&user)
+	if result.RowsAffected > 0 {
+		ctx.String(http.StatusOK, "更新成功")
+	} else {
+		ctx.String(http.StatusAccepted, "更新失败")
+	}
+}
+
+func (c UserController) Delete(ctx *gin.Context) {
+	idStr, ok := ctx.GetQuery("id")
+	if !ok {
+		ctx.String(http.StatusBadRequest, "参数有误")
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "参数有误")
+		return
+	}
+	result := models.GetDB().Delete(&models.User{}, id)
+	if result.RowsAffected > 0 {
+		ctx.String(http.StatusOK, "删除成功")
+	} else {
+		ctx.String(http.StatusAccepted, "删除失败")
+	}
+}

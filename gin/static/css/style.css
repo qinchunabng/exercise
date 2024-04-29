@@ -10,3 +10,7 @@ th,
 td {
   border: 1px solid #000;
 }
+
+.danger {
+  color: red;
+}
