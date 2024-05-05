@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+    <div class="search-box">
+        <form action="/admin/user/search" method="post">
+            <input type="text" name="username" id="username" placeholder="请输入姓名">
+            <button type="submit">查询</button>
+        </form>
+    </div>
+    <br>
     <table>
         <thead>
             <tr>

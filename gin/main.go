@@ -3,15 +3,32 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
+	"gin-demo/models"
 	"gin-demo/routes"
+	"log"
 	"net/http"
+	"os"
 	"text/template"
 	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/ini.v1"
 )
+
+var (
+	cfg *ini.File
+)
+
+func init() {
+	var err error
+	cfg, err = ini.Load("./conf/app.ini")
+	if err != nil {
+		log.Fatalf("fail to read file: %v\n", err)
+		os.Exit(1)
+	}
+}
 
 type UserInfo struct {
 	Name   string   `json:"name"`
@@ -47,6 +64,8 @@ func initMiddleware(ctx *gin.Context) {
 
 func main() {
 	r := gin.Default()
+	//初始化数据集
+	models.NewDB(cfg)
 	//初始化基于redis的存储引擎
 	//参数说明
 	//	第1个参数：redis最大的空闲连接数
@@ -54,7 +73,9 @@ func main() {
 	//	第3个参数：redis地址：ip:port
 	//	第4个参数：redis密码
 	//	第5个参数：session加密密钥
-	store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
+	redisHost := cfg.Section("redis").Key("ip").String()
+	redisPort := cfg.Section("redis").Key("port").String()
+	store, _ := redis.NewStore(10, "tcp", fmt.Sprintf("%v:%v", redisHost, redisPort), "", []byte("secret"))
 	store.Options(sessions.Options{
 		Path:     "/",
 		MaxAge:   0,

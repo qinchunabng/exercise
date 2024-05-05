@@ -11,3 +11,7 @@ type User struct {
 func (User) TableName() string {
 	return "user"
 }
+
+type UserArgument struct {
+	Username string `form:"username"`
+}

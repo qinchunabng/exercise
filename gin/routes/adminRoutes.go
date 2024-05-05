@@ -32,5 +32,6 @@ func AdminRoutesInit(router *gin.Engine) {
 		adminRouter.GET("/user/edit", controller.UserController{}.Edit)
 		adminRouter.POST("/user/save", controller.UserController{}.Save)
 		adminRouter.GET("/user/delete", controller.UserController{}.Delete)
+		adminRouter.POST("/user/search", controller.UserController{}.Search)
 	}
 }

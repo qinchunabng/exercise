@@ -113,15 +113,36 @@ func (c UserController) Edit(ctx *gin.Context) {
 }
 
 func (c UserController) Save(ctx *gin.Context) {
+	tx := models.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("err:%v", r)
+			tx.Rollback()
+			ctx.String(http.StatusAccepted, "更新失败")
+		}
+	}()
+	if err := tx.Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 	var user models.User
 	if err := ctx.ShouldBind(&user); err != nil {
+		tx.Rollback()
 		ctx.String(http.StatusBadRequest, "参数错误")
 		return
 	}
-	result := models.GetDB().Save(&user)
+
+	result := tx.Save(&user)
+	// n := 0
+	// i := 10 / n
+	// log.Println(i)
 	if result.RowsAffected > 0 {
+		tx.Commit()
 		ctx.String(http.StatusOK, "更新成功")
 	} else {
+		tx.Rollback()
 		ctx.String(http.StatusAccepted, "更新失败")
 	}
 }
@@ -143,4 +164,19 @@ func (c UserController) Delete(ctx *gin.Context) {
 	} else {
 		ctx.String(http.StatusAccepted, "删除失败")
 	}
+}
+
+func (c UserController) Search(ctx *gin.Context) {
+	var userArg models.UserArgument
+	if err := ctx.ShouldBind(&userArg); err != nil {
+		ctx.String(http.StatusBadRequest, "参数有误")
+		return
+	}
+	log.Printf("%s\n", fmt.Sprintf("%v%v%v", "%", userArg.Username, "%"))
+	var users []models.User
+	models.GetDB().Raw("select * from user where username like ?", "%"+userArg.Username+"%").Find(&users)
+	log.Println(users)
+	ctx.HTML(http.StatusOK, "admin/users.html", gin.H{
+		"users": users,
+	})
 }
