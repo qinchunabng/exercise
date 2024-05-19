@@ -113,6 +113,7 @@ func (c UserController) Edit(ctx *gin.Context) {
 }
 
 func (c UserController) Save(ctx *gin.Context) {
+	//开启事务
 	tx := models.GetDB().Begin()
 	defer func() {
 		if r := recover(); r != nil {
