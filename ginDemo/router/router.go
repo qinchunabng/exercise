@@ -1,16 +1,21 @@
 package router
 
 import (
-	"ginDemo/common"
+	common "ginDemo/common/function"
 	v1 "ginDemo/controller/v1"
 	v2 "ginDemo/controller/v2"
+	"ginDemo/middleware/logger"
+	"ginDemo/middleware/recover"
+	"ginDemo/validator/member"
 	"net/url"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 func InitRouter(r *gin.Engine) {
+	r.Use(logger.LoggerToFile(), recover.Recover())
 	r.GET("/sn", SignDemo)
 
 	//v1版本
@@ -25,12 +30,16 @@ func InitRouter(r *gin.Engine) {
 	{
 		GroupV2.Any("/product/add", v2.AddProduct)
 		GroupV2.Any("/member/add", v2.AddMember)
+	}
 
+	//绑定验证器
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("NameValid", member.NameValid)
 	}
 }
 
 func SignDemo(c *gin.Context) {
-	ts := strconv.FormatInt(common.GetTimeUnix(), 10)
+	ts := common.GetTimeUnix()
 	res := map[string]interface{}{}
 	params := url.Values{
 		"name":  []string{"a"},

@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"ginDemo/config"
-	"ginDemo/middleware"
 	"ginDemo/router"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +10,10 @@ import (
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)
-	engine := gin.Default()
-	engine.Use(middleware.LoggerToFile())
+	engine := gin.New()
 	router.InitRouter(engine) //设置路由
-	engine.Run(config.PORT)
+	err := engine.Run(config.PORT)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
